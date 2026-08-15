@@ -1,8 +1,10 @@
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 from openai import OpenAI
 
-load_dotenv()
+ENV_FILE = Path(__file__).resolve().parent.parent / ".env"
+load_dotenv(dotenv_path=ENV_FILE)
 
 FEATHERLESS_API_KEY = os.getenv("FEATHERLESS_API_KEY")
 
@@ -14,27 +16,25 @@ client = OpenAI(
     base_url="https://api.featherless.ai/v1"
 )
 
+
 class LLM_model:
-    def __init__(self, model:str):
+    def __init__(self, model: str):
         self.model = model
 
-    def ask(self, prompt:str) -> str:
+    def ask(self, prompt: str) -> str:
         response = client.chat.completions.create(
             model=self.model,
             messages=[
-                {
-                    "role":"user",
-                    "content": prompt
-                }
+                {"role": "user", "content": prompt}
             ],
             temperature=0.2,
         )
 
         return response.choices[0].message.content
 
+
 if __name__ == "__main__":
     llm = LLM_model("zai-org/GLM-5.2")
 
-    response = llm.ask("Say exactly: Hello Apricity!")
-
-    print(response)
+    print("Calling Featherless...")
+    print(llm.ask("Say exactly: Hello Apricity!"))
