@@ -48,24 +48,3 @@ class PyTester:
             }
 
 
-if __name__ == "__main__":
-    tester = PyTester()
-
-    code = """
-def add(a, b):
-    return a + b
-"""
-
-    tests = """
-from solution import add
-
-def test_add():
-    assert add(2, 3) == 5
-
-def test_add_negative():
-    assert add(-2, 2) == 0
-"""
-
-    result = tester.test(code, tests)
-
-    print(result)

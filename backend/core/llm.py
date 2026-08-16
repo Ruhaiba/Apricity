@@ -27,14 +27,9 @@ class LLM_model:
             messages=[
                 {"role": "user", "content": prompt}
             ],
-            temperature=0.2,
+            temperature=0.2
         )
 
         return response.choices[0].message.content
 
 
-if __name__ == "__main__":
-    llm = LLM_model("zai-org/GLM-5.2")
-
-    print("Calling Featherless...")
-    print(llm.ask("Say exactly: Hello Apricity!"))

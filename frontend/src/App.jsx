@@ -56,37 +56,51 @@ function App() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const analyze = () => {
-    if (!code.trim()) return;
+  const analyze = async () => {
+  if (!code.trim()) return;
 
-    setLoading(true);
-    setResult(null);
+  setLoading(true);
+  setResult(null);
 
-    setTimeout(() => {
-      setResult({
-        language,
-        intent,
-        solution: `def find_duplicates(items):
-    seen = set()
-    duplicates = []
+  try {
+    const response = await fetch("http://127.0.0.1:8000/analyze", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        code,
+        query: intent,
+      }),
+    });
 
-    for item in items:
-        if item in seen:
-            duplicates.append(item)
-        else:
-            seen.add(item)
+    if (!response.ok) {
+      throw new Error(`Server error: ${response.status}`);
+    }
 
-    return duplicates`,
-        changes: [
-          "Uses a set for constant-time membership checks.",
-          "Removes repeated list searches.",
-          "Preserves the original behavior.",
-        ],
-      });
+    const data = await response.json();
 
-      setLoading(false);
-    }, 900);
-  };
+    setResult({
+      language: data.language,
+      intent: data.intent,
+      solution: data.solution,
+      changes: data.verification?.analysis?.map(
+        (item) => `${item.code}: ${item.message}`
+      ) || ["Analysis completed successfully."],
+    });
+  } catch (error) {
+    console.error("Apricity API error:", error);
+
+    setResult({
+      language,
+      intent,
+      solution: "Unable to analyze code.",
+      changes: [error.message],
+    });
+  } finally {
+    setLoading(false);
+  }
+};
 
   const loadExample = () => {
     setLanguage("Python");

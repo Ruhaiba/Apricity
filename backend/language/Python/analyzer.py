@@ -1,5 +1,6 @@
 import json
 import subprocess
+import ast
 
 class PyAnalyzer:
     def analyze(self, code: str) -> list[dict]:
@@ -27,13 +28,30 @@ class PyAnalyzer:
             for finding in findings
         ]
 
-analyzer = PyAnalyzer()
 
-code = """
-import os
+    def analyze_structure(self, code: str) -> dict:
+        tree = ast.parse(code)
 
-def add(a, b):
-    return a + b
-"""
+        functions = []
+        classes = []
+        imports = []
 
-print(analyzer.analyze(code))
+        for node in ast.walk(tree):
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                functions.append(node.name)
+
+            elif isinstance(node, ast.ClassDef):
+                classes.append(node.name)
+
+            elif isinstance(node, ast.Import):
+                for name in node.names:
+                    imports.append(name.name)
+
+            elif isinstance(node, ast.ImportFrom):
+                imports.append(node.module)
+
+        return {
+            "functions": functions,
+            "classes": classes,
+            "imports": imports
+        }

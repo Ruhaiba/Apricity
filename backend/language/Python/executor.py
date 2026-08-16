@@ -8,7 +8,7 @@ class PyExecuter:
         file_path = None
 
         try:
-            with tempfile.NamedTemporary(
+            with tempfile.NamedTemporaryFile(
                 mode="w",
                 suffix=".py",
                 delete=False,
@@ -43,6 +43,3 @@ class PyExecuter:
             if file_path and os.path.exists(file_path):
                 os.remove(file_path)
 
-if __name__ == "__main__":
-    executor = PyExecuter()
-    print(executor.execute('print("Hello World!")'))
