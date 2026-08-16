@@ -15,6 +15,7 @@ app.add_middleware(
     allow_origins=[
     "http://localhost:5173",
     "https://apricity-teal.vercel.app",
+    "https://apricity-ndmwsdo6r-ruhaiba1.vercel.app"
 ],
     allow_credentials=True,
     allow_methods=["*"],
